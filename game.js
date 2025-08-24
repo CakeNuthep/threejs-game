@@ -240,57 +240,68 @@ const enemies = []
 
 let frames = 0
 let spawnRate = enermyConfig.spawnRate
+
+let msPrev = window.performance.now()
+const fps = 60
+const msPerFrame = 1000 / fps
 function animate() {
-const animationId = requestAnimationFrame(animate)
-renderer.render(scene, camera)
+    const animationId = requestAnimationFrame(animate)
+    const msNow = window.performance.now()
+    const msPassed = msNow - msPrev
 
-// movement code
-player.velocity.x = 0
-player.velocity.z = 0
-if (keys.a.pressed) player.velocity.x = -1 * playerConfig.moveVelocity.x
-else if (keys.d.pressed) player.velocity.x = playerConfig.moveVelocity.x
+    if (msPassed < msPerFrame) return
 
-if (keys.s.pressed) player.velocity.z = playerConfig.moveVelocity.z
-else if (keys.w.pressed) player.velocity.z = -1 * playerConfig.moveVelocity.z
+    renderer.render(scene, camera)
 
-player.update(ground)
-enemies.forEach((enemy) => {
-    enemy.update(ground)
-    if (
-    boxCollision({
-        box1: player,
-        box2: enemy
+    // movement code
+    player.velocity.x = 0
+    player.velocity.z = 0
+    if (keys.a.pressed) player.velocity.x = -1 * playerConfig.moveVelocity.x
+    else if (keys.d.pressed) player.velocity.x = playerConfig.moveVelocity.x
+
+    if (keys.s.pressed) player.velocity.z = playerConfig.moveVelocity.z
+    else if (keys.w.pressed) player.velocity.z = -1 * playerConfig.moveVelocity.z
+
+    player.update(ground)
+    enemies.forEach((enemy) => {
+        enemy.update(ground)
+        if (
+        boxCollision({
+            box1: player,
+            box2: enemy
+        })
+        ) {
+        cancelAnimationFrame(animationId)
+        }
     })
-    ) {
-    cancelAnimationFrame(animationId)
+
+    if (frames % spawnRate === 0) {
+        if (spawnRate > enermyConfig.spawnRateLimitation) spawnRate -= enermyConfig.spawnRateReduce
+
+        const enemy = new Box({
+        width: enermyConfig.width,
+        height: enermyConfig.height,
+        depth: enermyConfig.depth,
+        position: {
+            x: (Math.random() - 0.5) * ground.width,
+            y: enermyConfig.position.y,
+            z: enermyConfig.position.z
+        },
+        velocity: {
+            x: enermyConfig.velocidy.x,
+            y: enermyConfig.velocidy.y,
+            z: enermyConfig.velocidy.z
+        },
+        color: enermyConfig.color,
+        zAcceleration: enermyConfig.zAcceleration
+        })
+        enemy.castShadow = enermyConfig.cashtShadow
+        scene.add(enemy)
+        enemies.push(enemy)
     }
-})
 
-if (frames % spawnRate === 0) {
-    if (spawnRate > enermyConfig.spawnRateLimitation) spawnRate -= enermyConfig.spawnRateReduce
-
-    const enemy = new Box({
-    width: enermyConfig.width,
-    height: enermyConfig.height,
-    depth: enermyConfig.depth,
-    position: {
-        x: (Math.random() - 0.5) * ground.width,
-        y: enermyConfig.position.y,
-        z: enermyConfig.position.z
-    },
-    velocity: {
-        x: enermyConfig.velocidy.x,
-        y: enermyConfig.velocidy.y,
-        z: enermyConfig.velocidy.z
-    },
-    color: enermyConfig.color,
-    zAcceleration: enermyConfig.zAcceleration
-    })
-    enemy.castShadow = enermyConfig.cashtShadow
-    scene.add(enemy)
-    enemies.push(enemy)
-}
-
-frames++
+    frames++
+    const excessTime = msPassed % msPerFrame
+    msPrev = msNow - excessTime
 }
 animate()
