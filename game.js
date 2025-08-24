@@ -287,8 +287,5 @@ if (frames % spawnRate === 0) {
 }
 
 frames++
-// cube.position.y += -0.01
-// cube.rotation.x += 0.01
-// cube.rotation.y += 0.01
 }
 animate()
