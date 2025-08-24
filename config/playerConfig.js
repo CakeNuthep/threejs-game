@@ -17,7 +17,7 @@ export const playerConfig = {
         y:0,
         z:0.05
     },
-    jumpVelocity:0.08,
+    jumpStrength:0.08,
     color:'#00ff00',
     zAcceleration:false,
     cashtShadow:true,

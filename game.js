@@ -76,6 +76,7 @@ constructor({
     this.gravity = environmentConfig.gravity
 
     this.zAcceleration = zAcceleration
+    this.onGround = true;
 }
 
 updateSides() {
@@ -113,6 +114,7 @@ applyGravity(ground) {
     const friction = environmentConfig.gravityFriction
     this.velocity.y *= friction
     this.velocity.y = -this.velocity.y
+    this.onGround = true;
     } else this.position.y += this.velocity.y
 }
 }
@@ -126,7 +128,7 @@ const zCollision = box1.front >= box2.back && box1.back <= box2.front
 return xCollision && yCollision && zCollision
 }
 
-const cube = new Box({
+const player = new Box({
     width: playerConfig.width,
     height: playerConfig.height,
     depth: playerConfig.depth,
@@ -143,8 +145,8 @@ const cube = new Box({
     color: playerConfig.color,
     zAcceleration: playerConfig.zAcceleration
 })
-cube.castShadow = playerConfig.cashtShadow
-scene.add(cube)
+player.castShadow = playerConfig.cashtShadow
+scene.add(player)
 
 const ground = new Box({
     width: groundConfig.width,
@@ -177,7 +179,7 @@ scene.add(new THREE.AmbientLight(ambientLightConfig.color, ambientLightConfig.in
 
 camera.position.z = ambientLightConfig.position.z
 console.log(ground.top)
-console.log(cube.bottom)
+console.log(player.bottom)
 
 const keys = {
 a: {
@@ -209,7 +211,10 @@ switch (event.code) {
     keys.w.pressed = true
     break
     case 'Space':
-    cube.velocity.y = playerConfig.jumpVelocity
+    if(player.onGround){
+        player.velocity.y = playerConfig.jumpStrength
+        player.onGround = false;
+    }
     break
 }
 })
@@ -240,20 +245,20 @@ const animationId = requestAnimationFrame(animate)
 renderer.render(scene, camera)
 
 // movement code
-cube.velocity.x = 0
-cube.velocity.z = 0
-if (keys.a.pressed) cube.velocity.x = -1 * playerConfig.moveVelocity.x
-else if (keys.d.pressed) cube.velocity.x = playerConfig.moveVelocity.x
+player.velocity.x = 0
+player.velocity.z = 0
+if (keys.a.pressed) player.velocity.x = -1 * playerConfig.moveVelocity.x
+else if (keys.d.pressed) player.velocity.x = playerConfig.moveVelocity.x
 
-if (keys.s.pressed) cube.velocity.z = playerConfig.moveVelocity.z
-else if (keys.w.pressed) cube.velocity.z = -1 * playerConfig.moveVelocity.z
+if (keys.s.pressed) player.velocity.z = playerConfig.moveVelocity.z
+else if (keys.w.pressed) player.velocity.z = -1 * playerConfig.moveVelocity.z
 
-cube.update(ground)
+player.update(ground)
 enemies.forEach((enemy) => {
     enemy.update(ground)
     if (
     boxCollision({
-        box1: cube,
+        box1: player,
         box2: enemy
     })
     ) {
