@@ -1,0 +1,24 @@
+export const playerConfig = {
+    width:1,
+    height:1,
+    depth:1,
+    position:{
+        x:0,
+        y:0,
+        z:0
+    },
+    velocity:{
+        x:0,
+        y:0,
+        z:0
+    },
+    moveVelocity:{
+        x:0.05,
+        y:0,
+        z:0.05
+    },
+    jumpVelocity:0.08,
+    color:'#00ff00',
+    zAcceleration:false,
+    cashtShadow:true,
+};

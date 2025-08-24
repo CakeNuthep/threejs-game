@@ -1,0 +1,21 @@
+export const enermyConfig = {
+    width:1,
+    height:1,
+    depth:1,
+    position:{
+        x:0,
+        y:0,
+        z:-20
+    },
+    velocidy:{
+        x:0,
+        y:0,
+        z:0.005
+    },
+    color:'red',
+    zAcceleration:true,
+    cashtShadow:true,
+    spawnRateLimitation:20,
+    spawnRateReduce:20,
+    spawnRate:200
+};
